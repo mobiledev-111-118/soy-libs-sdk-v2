@@ -16,7 +16,7 @@ export interface TradeOptions {
    * This will be used to produce a `deadline` parameter which is computed from when the swap call parameters
    * are generated.
    */
-  ttl: number
+  deadline: number
   /**
    * The account that should receive the output of the swap.
    */
@@ -70,13 +70,13 @@ export abstract class Router {
     const etherOut = trade.outputAmount.currency === ETHER
     // the router does not support both ether in and out
     invariant(!(etherIn && etherOut), 'ETHER_IN_OUT')
-    invariant(options.ttl > 0, 'TTL')
+    invariant(options.deadline > 0, 'TTL')
 
     const to: string = validateAndParseAddress(options.recipient)
     const amountIn: string = toHex(trade.maximumAmountIn(options.allowedSlippage))
     const amountOut: string = toHex(trade.minimumAmountOut(options.allowedSlippage))
     const path: string[] = trade.route.path.map(token => token.address)
-    const deadline = `0x${(Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16)}`
+    const deadline = `0x${(Math.floor(new Date().getTime() / 1000) + options.deadline).toString(16)}`
     const useFeeOnTransfer = Boolean(options.feeOnTransfer)
 
     let methodName: string
